@@ -2,32 +2,33 @@ name: Generate SBOM
 
 on:
   push:
-    branches: [master]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   generate-sbom:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v3
+      
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
-
+          
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
+        run: npm ci
+        
       - name: Install CycloneDX
         run: npm install -g @cyclonedx/cyclonedx-npm
-
+        
       - name: Generate SBOM
-        run: cyclonedx-npm --output-file sbom.json
-
+        run: cyclonedx-npm --output-file bom.json
+        
       - name: Upload SBOM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: sbom
-          path: sbom.json
+          path: bom.json 
