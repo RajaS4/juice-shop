@@ -18,23 +18,22 @@ jobs:
         with:
           node-version: '18'
           
-      - name: Install root dependencies
-        run: npm install --legacy-peer-deps
-        
-      - name: Install frontend dependencies
-        run: |
-          cd frontend
-          npm install --legacy-peer-deps
-          cd ..
-        
       - name: Install CycloneDX
         run: npm install -g @cyclonedx/cyclonedx-npm
         
-      - name: Generate SBOM
-        run: cyclonedx-npm --output-file bom.json
+      - name: Generate root SBOM
+        run: cyclonedx-npm --output-file root-bom.json
         
-      - name: Upload SBOM
+      - name: Generate frontend SBOM
+        run: |
+          cd frontend
+          cyclonedx-npm --output-file frontend-bom.json
+          cd ..
+        
+      - name: Upload SBOMs
         uses: actions/upload-artifact@v4
         with:
-          name: sbom
-          path: bom.json 
+          name: sboms
+          path: |
+            root-bom.json
+            frontend/frontend-bom.json
