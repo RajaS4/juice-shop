@@ -1,27 +1,24 @@
 name: Generate SBOM
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
   sbom:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'  # Minstens v20.18.0 zoals vereist
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Install CycloneDX module
+      - name: Install CycloneDX CLI
         run: npm install -g @cyclonedx/bom
 
       - name: Generate SBOM
