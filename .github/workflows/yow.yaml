@@ -18,6 +18,15 @@ jobs:
         with:
           node-version: '18'
           
+      - name: Install root dependencies
+        run: npm install --legacy-peer-deps
+        
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install --legacy-peer-deps
+          cd ..
+          
       - name: Install CycloneDX
         run: npm install -g @cyclonedx/cyclonedx-npm
         
@@ -36,4 +45,4 @@ jobs:
           name: sboms
           path: |
             root-bom.json
-            frontend/frontend-bom.json
+            frontend/frontend-bom.json 
