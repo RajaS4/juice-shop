@@ -2,47 +2,36 @@ name: Generate SBOM
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
   generate-sbom:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          
-      - name: Install root dependencies
+          node-version: "18"
+
+      - name: Install dependencies
         run: npm install --legacy-peer-deps
-        
-      - name: Install frontend dependencies
-        run: |
-          cd frontend
-          npm install --legacy-peer-deps
-          cd ..
-          
+
+      - name: Install eslint-plugin-n
+        run: npm install --save-dev eslint-plugin-n@^16.0.0
+
       - name: Install CycloneDX
         run: npm install -g @cyclonedx/cyclonedx-npm
-        
-      - name: Generate root SBOM
-        run: cyclonedx-npm --output-file root-bom.json
-        
-      - name: Generate frontend SBOM
-        run: |
-          cd frontend
-          cyclonedx-npm --output-file frontend-bom.json
-          cd ..
-        
-      - name: Upload SBOMs
+
+      - name: Generate SBOM
+        run: cyclonedx-npm --output-file sbom.json
+
+      - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
-          name: sboms
-          path: |
-            root-bom.json
-            frontend/frontend-bom.json 
+          name: sbom
+          path: sbom.json
